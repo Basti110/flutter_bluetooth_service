@@ -224,10 +224,10 @@ class BluetoothServiceControl {
     //bool test = await charactersitics.setNotifyValue(false);
     bool test = await charactersitics.setNotifyValue(true);
     _logger?.d("notify = $test");
-    await charactersitics.read();
+    // await charactersitics.read();
     // await charactersitics.write( _getBytes("hello"), withoutResponse: true);
     // await charactersitics.read();
-    _logger?.d("Notification established");
+    //_logger?.d("Notification established");
 
 
     _connectionIsRunning = false;
