@@ -329,4 +329,89 @@ Future<bool> sendMsg(String msg) async {
     await sendMsg(jsonData);
     return true;
   }
+  Future<bool> getAllStationsAndAllExercises() async {
+    if (!_initialized) {
+      return false;
+    }
+
+    Map request = getMapFromRequest(5);
+    request["payload"] = {};
+    String jsonData = jsonEncode(request);
+    await sendMsg(jsonData);
+    return true;
+  }
+
+  Future<bool> getAllExercisesAtOneStation(int stationID) async {
+    if (!_initialized) {
+      return false;
+    }
+
+    Map request = getMapFromRequest(6);
+    request["payload"] = {"station": stationID,};
+    String jsonData = jsonEncode(request);
+    await sendMsg(jsonData);
+    return true;
+  }
+
+  Future<bool> weightIdentify(int stationID, double time) async {
+    if (!_initialized) {
+      return false;
+    }
+
+    Map request = getMapFromRequest(7);
+    request["payload"] = {"station": stationID, "time:": time};
+    String jsonData = jsonEncode(request);
+    await sendMsg(jsonData);
+    return true;
+  }
+
+  Future<bool> queueUser(int stationID) async {
+    if (!_initialized) {
+      return false;
+    }
+
+    Map request = getMapFromRequest(10);
+    request["payload"] = {"station": stationID};
+    String jsonData = jsonEncode(request);
+    await sendMsg(jsonData);
+    return true;
+  }
+
+
+  Future<bool> dequeueUser() async {
+    if (!_initialized) {
+      return false;
+    }
+
+    Map request = getMapFromRequest(11);
+    request["payload"] = {};
+    String jsonData = jsonEncode(request);
+    await sendMsg(jsonData);
+    return true;
+  }
+
+
+  Future<bool> queueState() async {
+    if (!_initialized) {
+      return false;
+    }
+
+    Map request = getMapFromRequest(13);
+    request["payload"] = {};
+    String jsonData = jsonEncode(request);
+    await sendMsg(jsonData);
+    return true;
+  }
+
+  Future<bool> queueList() async {
+    if (!_initialized) {
+      return false;
+    }
+
+    Map request = getMapFromRequest(16);
+    request["payload"] = {};
+    String jsonData = jsonEncode(request);
+    await sendMsg(jsonData);
+    return true;
+  }
 }
