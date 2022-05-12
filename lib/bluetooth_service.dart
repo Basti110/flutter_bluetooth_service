@@ -21,7 +21,7 @@ class BluetoothServiceControl {
   //Private
   bool _initialized = false;
   bool _connectionIsRunning = false;
-  bool _bluetoothOn = false;
+  bool _bluetoothOn = true;
   static const String _serviceStart = '0000ac00';
   static const String _serviceEnd = '0000ac08';
   StreamSubscription<BluetoothDeviceState>? _btDeviceStatelistener;
