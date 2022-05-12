@@ -46,7 +46,11 @@ class BluetoothServiceControl {
   );
 
   BluetoothServiceControl([Logger? logger]) {
-    _logger = logger;
+    if (logger == null) {
+      _logger = Logger();
+    } else {
+      _logger = logger;
+    }
     int serviceStart = int.parse(_serviceStart, radix: 16);
     int serviceEnd = int.parse(_serviceEnd, radix: 16);
     List<String> serviceUUIDs = [];
@@ -157,7 +161,7 @@ class BluetoothServiceControl {
       showToast('connection established');
       connectionID = msg["id"];
       _initialized = true;
-      _connectionController.add(true);
+      //_connectionController.add(true);
     }
     _serverMsgController.add(msg);
   }
@@ -179,15 +183,17 @@ class BluetoothServiceControl {
     }
 
     String uuid = await _startScanForDeviceAndUUID();
-    _logger?.d("Adcertise UUID: $uuid");
+    //_logger?.d("Adcertise UUID: $uuid");
     if (device == null) {
       _logger?.w("No Device with right uuid in advertisement found");
       return _releaseConnectionReturnFalse();
     }
 
+    bool wasAlreadyConnected = false;
     _btDeviceStatelistener?.cancel();
     if (await device!.state.first == BluetoothDeviceState.connected) {
       _logger?.d("Already connected!");
+      wasAlreadyConnected = true;
     }
     else {
       _logger?.d("Try to connect to device ${device?.id.toString()}");
@@ -203,8 +209,8 @@ class BluetoothServiceControl {
     _btDeviceStatelistener = device?.state.listen((state) {
       _connectionController.add(state == BluetoothDeviceState.connected);
     });
-    int mtu = await device?.requestMtu(223) ?? -1;
-    _logger?.d("New MTU: $mtu");
+    await device?.requestMtu(223) ?? -1;
+    //_logger?.d("New MTU: $mtu");
 
     BluetoothService? btService = await _scanDeviceForService(uuid);
     if(btService == null) {
@@ -217,13 +223,18 @@ class BluetoothServiceControl {
       return _releaseConnectionReturnFalse();
     }
 
-    _logger?.d("Request Notification");
+    //_logger?.d("Request Notification");
     BluetoothCharacteristic charactersitics = _btService!.characteristics[0];
     charactersitics.onValueChangedStream.listen(onNewByteMsg);
 
     //bool test = await charactersitics.setNotifyValue(false);
-    bool test = await charactersitics.setNotifyValue(true);
-    _logger?.d("notify = $test");
+    await charactersitics.setNotifyValue(true);
+    if(wasAlreadyConnected) {
+      Map request = getMapFromRequest(0);
+      String jsonData = jsonEncode(request);
+      await sendMsg(jsonData);
+    }
+    //_logger?.d("notify = $test");
     // await charactersitics.read();
     // await charactersitics.write( _getBytes("hello"), withoutResponse: true);
     // await charactersitics.read();
